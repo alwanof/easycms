@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Category;
+use App\Post;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -13,7 +15,15 @@ class PostController extends Controller
      */
     public function index()
     {
-        return view('posts.index');
+        //Post::all();
+        //Post::find(5);
+        //Post::where('category_id','=',1)->orWhere('category_id','=',2)->get();
+        //Post::orderBy('created_at','asc/desc')->get();
+        //Post::latest()->get();
+
+
+        $posts = Post::latest()->get();
+        return view('posts.index', compact(['posts']));
     }
 
     /**
@@ -23,7 +33,8 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('posts.create');
+        $categories = Category::all();
+        return view('posts.create', compact(['categories']));
     }
 
     /**
@@ -34,7 +45,21 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //return $request->all();
+
+        $post = new Post;
+        $post->title = $request->title;
+        $post->content = $request->content;
+        $post->category_id = $request->category_id;
+        $post->save();
+
+        /*Post::create([
+            'title'=>$request->title,
+            'content'=>$request->content,
+            'category_id'=>$request->category_id
+        ]);*/
+
+        return redirect(route('posts.index'));
     }
 
     /**
@@ -45,7 +70,8 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        //
+        $post = Post::find($id);
+        return view('posts.show', compact(['post']));
     }
 
     /**
